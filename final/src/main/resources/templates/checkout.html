@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <title>3DSecure 2.0 Authentication</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/style.css"/>
+    <link rel="stylesheet" href="css/spinner.css"/>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css"
+          integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+</head>
+<body>
+
+<nav class="navbar navbar-light bg-light justify-content-between">
+    <a class="navbar-brand" href="/">The Shop</a>
+    <div class="dropdown">
+        <button type="button" class="btn btn-dark" data-toggle="dropdown">
+            <i class="fa fa-shopping-cart" aria-hidden="true"></i> Cart <span
+                class="badge badge-pill badge-danger" th:text="${cart.totalNumItems}">3</span>
+        </button>
+
+        <div class="dropdown-menu">
+            <div class="row total-header-section">
+                <div class="col-lg-6 col-sm-6 col-6">
+                    <i class="fa fa-shopping-cart" aria-hidden="true"></i> <span
+                        class="badge badge-pill badge-danger" th:text="${cart.totalNumItems}">3</span>
+                </div>
+                <div class="col-lg-6 col-sm-6 col-6 total-section text-right">
+                    <p>Total: <span class="text-info" th:text="'$' + ${cart.totalCost} + '0'">$2,978.24</span></p>
+                </div>
+            </div>
+            <div class="row cart-detail" th:each="item : ${cart.items}">
+
+                <div class="col-lg-4 col-sm-4 col-4 cart-detail-img">
+                    <img th:src="${item.value.imagePath}">
+                </div>
+                <div class="col-lg-8 col-sm-8 col-8 cart-detail-product">
+                    <div class="row">
+                        <p class="col-sm-9" th:text="${item.value.name}">Apple</p>
+                        <form action="/update-cart" method="post" class="col-sm-3">
+                            <input type="hidden" name="key" th:value="${item.key}">
+                            <input type="hidden" name="quantity" th:value="0"/>
+                            <button type="submit" class="close" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </form>
+                    </div>
+                    <span class="price text-info" th:text="'$' + ${item.value.price} + 0"> $250.22</span>
+                    <span class="count" th:text="'Quantity:' + ${item.value.quantity}"> Quantity:01</span>
+                </div>
+            </div>
+
+            <div class="checkout">
+                <a href="/" class="checkout-button btn btn-primary btn-block">Back to shopping</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="row h-100 card-row">
+        <div class="col-sm-8">
+            <!--Checkout card-->
+
+            <div class="card d-none" id="checkoutCard">
+                <div class="challengeContainer border">
+                    <div class="spinner row h-100 justify-content-center align-items-center">
+                        <div class="col">
+                            <div class="sk-fading-circle">
+                                <div class="sk-circle1 sk-circle"></div>
+                                <div class="sk-circle2 sk-circle"></div>
+                                <div class="sk-circle3 sk-circle"></div>
+                                <div class="sk-circle4 sk-circle"></div>
+                                <div class="sk-circle5 sk-circle"></div>
+                                <div class="sk-circle6 sk-circle"></div>
+                                <div class="sk-circle7 sk-circle"></div>
+                                <div class="sk-circle8 sk-circle"></div>
+                                <div class="sk-circle9 sk-circle"></div>
+                                <div class="sk-circle10 sk-circle"></div>
+                                <div class="sk-circle11 sk-circle"></div>
+                                <div class="sk-circle12 sk-circle"></div>
+                            </div>
+
+                            <div class="text-center"><img class="w-25" src="images/visa-logo.png"/></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--Cardholder information -->
+            <div class="card" id="cardholderInfoCard">
+                <div class="card-header">Cardholder Information</div>
+                <form class="card-body" id="cardholder-info-form">
+
+                    <h4 class="card-title">Billing details</h4>
+                    <p class="card-text">Enter your billing details and click "Continue to checkout".</p>
+                    <dl class="row">
+                        <dt class="col-sm-4">Email</dt>
+                        <dd class="col-sm-8">
+                            <input type="text" id="email" class="form-control" value="abc@123.com" required
+                                   title="email"/>
+                        <dt class="col-sm-4">Address Line 1</dt>
+                        <dd class="col-sm-8">
+                            <input type="text" id="billAddrLine1" class="form-control" value="Unit 1" required
+                                   title="billAddrLine1"/>
+                        </dd>
+                        <dt class="col-sm-4">Address Line 2</dt>
+                        <dd class="col-sm-8">
+                            <input type="text" id="billAddrLine2" class="form-control" value="123 Street Suburb"
+                                   required title="billAddrLine2"/>
+                        </dd>
+                        <dt class="col-sm-4">City</dt>
+                        <dd class="col-sm-8">
+                            <input type="text" id="billAddrCity" class="form-control" value="Sydney" required
+                                   title="billAddrCity"/>
+                        </dd>
+                        <dt class="col-sm-4">State</dt>
+                        <dd class="col-sm-8">
+                            <input type="text" id="billAddrState" class="form-control" value="NSW" required
+                                   title="billAddrState"/>
+                        </dd>
+                        <dt class="col-sm-4">ZIP</dt>
+                        <dd class="col-sm-8">
+                            <input type="text" id="billAddrPostCode" class="form-control" value="2000" required
+                                   title="billAddrPostCode"/>
+                        </dd>
+                        <dt class="col-sm-4">Country</dt>
+                        <dd class="col-sm-8">
+                            <input type="text" id="billAddrCountry" class="form-control" value="Australia" required
+                                   title="billAddrCountry"/>
+                        </dd>
+
+                        <dt class="col-sm-4">Mobile Number</dt>
+                        <dd class="col-sm-8">
+                            <input type="text" id="phoneNumber" class="form-control" value="0421522329" required
+                                   title="phoneNumber"/>
+                        </dd>
+                    </dl>
+
+                    <hr class="mb-4"/>
+                    <h4 class="mb-3">Payment</h4>
+                    <dl class="row">
+                        <dt class="col-sm-4">Name on card</dt>
+                        <dd class="col-sm-8">
+                            <input type="text" id="cardholderName" class="form-control" value="Suda Ichiro" required
+                                   title="cardholderName"/>
+                        <dt class="col-sm-4">Card Number</dt>
+                        <dd class="col-sm-8">
+                            <input type="text" id="cardNumber" class="form-control" value="4123450000002" required
+                                   title="cardNumber"/>
+                        </dd>
+
+                        <dt class="col-sm-4">Expiry Date (YYMM)</dt>
+                        <dd class="col-sm-8">
+                            <input type="text" id="cardExpiry" class="form-control" value="2010" required
+                                   title="expiry date"/>
+                        </dd>
+                    </dl>
+                    <hr class="mb-4"/>
+                    <div class="row">
+
+                        <dt class="col-sm-12">Is this address also your billing address?</dt>
+                        <div class="col-sm-1"></div>
+                        <div class="col-sm-11">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="shipping-radios"
+                                       id="shipping-radio-yes"
+                                       value="option1" onclick="showAdvancedDetails(false)" checked>
+                                <label class="form-check-label" for="shipping-radio-yes">
+                                    Yes
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-sm-1"></div>
+                        <div class="col-sm-11">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="shipping-radios"
+                                       id="shipping-radio-no"
+                                       value="option2" onclick="showAdvancedDetails(true)">
+                                <label class="form-check-label" for="shipping-radio-no">
+                                    No
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="advanced-details" class="d-none">
+                        <hr class="mb-4"/>
+                        <h4 class="card-title">Shipping details</h4>
+                        <p class="card-text">Enter you shipping details and click "Continue to checkout".</p>
+                        <d1 class="row">
+                            <dt class="col-sm-4">Address Line 1</dt>
+                            <dd class="col-sm-8">
+                                <input type="text" id="shipAddrLine1" class="form-control" value="Unit 1" required
+                                       title="shipping address 1"/>
+                            </dd>
+                            <dt class="col-sm-4">Address Line 2</dt>
+                            <dd class="col-sm-8">
+                                <input type="text" id="shipAddrLine2" class="form-control" value="123 Street"
+                                       required title="shipping address 2"/>
+                            </dd>
+                            <dt class="col-sm-4">City</dt>
+                            <dd class="col-sm-8">
+                                <input type="text" id="shipAddrCity" class="form-control" value="Sydney" required
+                                       title="shipping address city"/>
+                            </dd>
+                            <dt class="col-sm-4">State</dt>
+                            <dd class="col-sm-8">
+                                <input type="text" id="shipAddrState" class="form-control" value="NSW" required
+                                       title="shipping address state"/>
+                            </dd>
+                            <dt class="col-sm-4">ZIP</dt>
+                            <dd class="col-sm-8">
+                                <input type="text" id="shipAddrPostCode" class="form-control" value="2000" required
+                                       title="shipping adddress post code"/>
+                            </dd>
+                            <dt class="col-sm-4">Country</dt>
+                            <dd class="col-sm-8">
+                                <input type="text" id="shipAddrCountry" class="form-control" value="Australia" required
+                                       title="shipping address country"/>
+                            </dd>
+                        </d1>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="col-sm-4 mb-4">
+            <h4 class="d-flex justify-content-between align-items-center mb-3">
+                <span class="text-muted">Your cart</span>
+                <span class="badge badge-secondary badge-pill" th:text="${cart.totalNumItems}">3</span>
+            </h4>
+            <ul class="list-group mb-3">
+                <li class="list-group-item d-flex justify-content-between lh-condensed" th:each="item : ${cart.items}">
+                    <div class="row cart-detail">
+                        <div class="col-lg-4 col-sm-4 col-4 cart-detail-img">
+                            <img th:src="${item.value.imagePath}">
+                        </div>
+                        <div class="col-lg-8 col-sm-8 col-8 cart-detail-product">
+                            <p th:text="${item.value.name}">Apple</p>
+                            <span class="price text-info" th:text="'$' + ${item.value.price} + 0"> $250.22</span>
+                            <span class="count" th:text="'Quantity:' + ${item.value.quantity}"> Quantity:01</span>
+                        </div>
+                    </div>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                    <span>Total (USD)</span>
+                    <strong th:text="'$' + ${cart.totalCost} + 0"></strong>
+                </li>
+
+                <div id="checkoutButton">
+                    <button th:if="${cart.totalNumItems} > 0" class="btn btn-primary btn-lg btn-block"
+                            onclick="checkout()">Continue to checkout
+                    </button>
+                    <!--disable button if no items added-->
+                    <button th:if="${cart.totalNumItems} == 0" class="btn btn-primary btn-lg btn-block disabled">
+                        Continue to checkout
+                    </button>
+                </div>
+
+            </ul>
+        </div>
+
+    </div>
+
+    <input type="hidden" id="transId" th:value="${transId}"/>
+
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+        integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+        integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+        crossorigin="anonymous"></script>
+<script src="/js/3ds-web-adapter.js"></script>
+
+<script>
+    function showAdvancedDetails(toShow) {
+        var advancedDiv = document.getElementById("advanced-details");
+        if (toShow) {
+            advancedDiv.classList.remove("d-none");
+        } else {
+            advancedDiv.classList.add("d-none");
+            // make shipping address the same as billing address.
+            $("#shipAddrLine1").val($("#billAddrLine1").val());
+            $("#shipAddrLine2").val($("#billAddrLine2").val());
+            $("#shipAddrCity").val($("#billAddrCity").val());
+            $("#shipAddrState").val($("#billAddrState").val());
+            $("#shipAddrPostCode").val($("#billAddrPostCode").val());
+            $("#shipAddrCountry").val($("#billAddrCountry").val());
+        }
+    }
+
+    function checkout() {
+        var transId = $('#transId').val();
+
+        // NOTE: Some attributes are set to default values for demo purpose
+        var cardHolderInfo = {
+            billAddrLine1: $('#billAddrLine1').val(),
+            billAddrLine2: $('#billAddrLine2').val(),
+            billAddrLine3: 'abc Line 3',
+            billAddrCity: $('#billAddrCity').val(),
+            billAddrState: $('#billAddrState').val(),
+            billAddrPostCode: $('#billAddrPostCode').val(),
+            billAddrCountry: '036',
+            shipAddrLine1: $('#shipAddrLine1').val(),
+            shipAddrLine2: $('#shipAddrLine2').val(),
+            shipAddrLine3: 'abc Line 3',
+            shipAddrCity: $('#shipAddrCity').val(),
+            shipAddrState: $('#shipAddrState').val(),
+            shipAddrPostCode: $('#shipAddrPostCode').val(),
+            shipAddrCountry: '036',
+            mobilePhone: {cc: '61', subscriber: $('#phoneNumber').val()},
+            homePhone: {cc: '61', subscriber: '90123917131'},
+            workPhone: {cc: '61', subscriber: '89102183192'},
+            email: $('#email').val(),
+            cardholderName: $('#cardholderName').val()
+        };
+
+        var purchaseInfo = {
+            acctNumber: $('#cardNumber').val(),
+            purchaseAmount: '100',
+            purchaseCurrency: '840', //USD
+            expiryDate: $('#cardExpiry').val()
+        };
+
+        //remove cardholder information class, checkout button and show spinner effect
+        $("#checkoutButton").remove();
+
+        $("#cardholderInfoCard").remove();
+        $("#checkoutCard").removeClass("d-none");
+
+
+        threeDSAuth(transId, cardHolderInfo, purchaseInfo);
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css"
+          integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/style.css"/>
+</head>
+<body>
+<nav class="navbar navbar-light bg-light justify-content-between">
+    <a class="navbar-brand" href="/">The Shop</a>
+    <div class="dropdown">
+        <button type="button" class="btn btn-dark" data-toggle="dropdown">
+            <i class="fa fa-shopping-cart" aria-hidden="true"></i> Cart <span
+                class="badge badge-pill badge-danger">0</span>
+        </button>
+
+        <div class="dropdown-menu">
+            <div class="row total-header-section">
+                <div class="col-lg-6 col-sm-6 col-6">
+                    <i class="fa fa-shopping-cart" aria-hidden="true"></i> <span
+                        class="badge badge-pill badge-danger">0</span>
+                </div>
+                <div class="col-lg-6 col-sm-6 col-6 total-section text-right">
+                    <p>Total: <span class="text-info">$0.00</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="mx-auto container">
+    <div class="row card-row">
+
+        <div class="col-sm-8">
+            <div class="card">
+                <div class="card-header">Transaction successful</div>
+                <div class="card-body">
+                    <h4 class="card-title text-success">3D secure authentication was successful</h4>
+                    <p class="card-text">You may move onto authorization using the result below
+                        or you can press "Back To Home" to restart the authentication process.</p>
+
+                    <dl class="row">
+
+                        <dt class="col-sm-3">Trans Status</dt>
+                        <dd class="col-sm-9" data-th-text="${result.transStatus}">Y</dd>
+                        <dt class="col-sm-3">ECI</dt>
+                        <dd class="col-sm-9" data-th-text="${result.eci}">eci value</dd>
+                        <dt class="col-sm-3">CAVV</dt>
+                        <dd class="col-sm-9" data-th-text="${result.authenticationValue}">cavv value</dd>
+                        <dt class="col-sm-3">Other Info</dt>
+                        <dd class="col-sm-9"></dd>
+
+                    </dl>
+
+                    <a href="/" class="btn btn-primary btn-block">Back to Home</a>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-4 mb-4">
+            <h4 class="d-flex justify-content-between align-items-center mb-3">
+                <span class="text-muted">Your Purchase</span>
+                <span class="badge badge-secondary badge-pill" th:text="${cart.totalNumItems}">3</span>
+            </h4>
+            <ul class="list-group mb-3">
+                <li class="list-group-item d-flex justify-content-between lh-condensed" th:each="item : ${cart.items}">
+                    <div class="row cart-detail">
+                        <div class="col-lg-4 col-sm-4 col-4 cart-detail-img">
+                            <img th:src="${item.value.imagePath}">
+                        </div>
+                        <div class="col-lg-8 col-sm-8 col-8 cart-detail-product">
+                            <p th:text="${item.value.name}">Apple</p>
+                            <span class="price text-info" th:text="'$' + ${item.value.price} + 0"> $250.22</span>
+                            <span class="count" th:text="'Quantity:' + ${item.value.quantity}"> Quantity:01</span>
+                        </div>
+                    </div>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                    <span>Total (USD)</span>
+                    <strong th:text="'$' + ${cart.totalCost} + 0"></strong>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+</div>
+
+</div>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+        integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+        integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+        crossorigin="anonymous"></script>
+</body>
+</html>

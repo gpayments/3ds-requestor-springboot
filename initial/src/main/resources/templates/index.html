@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <title>3DSecure 2.0 Authentication</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css"
+          integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous"/>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css"
+          integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+
+</head>
+<body>
+<nav class="navbar navbar-light bg-light justify-content-between">
+    <a class="navbar-brand" href="/">The Shop</a>
+    <div class="dropdown">
+        <button type="button" class="btn btn-dark" data-toggle="dropdown">
+            <i class="fa fa-shopping-cart" aria-hidden="true"></i> Cart <span
+                class="badge badge-pill badge-danger" th:text="${cart.totalNumItems}">3</span>
+        </button>
+
+        <div class="dropdown-menu">
+            <div class="row total-header-section">
+                <div class="col-lg-6 col-sm-6 col-6">
+                    <i class="fa fa-shopping-cart" aria-hidden="true"></i> <span
+                        class="badge badge-pill badge-danger" th:text="${cart.totalNumItems}">0</span>
+                </div>
+                <div class="col-lg-6 col-sm-6 col-6 total-section text-right">
+                    <p>Total: <span class="text-info" th:text="'$' + ${cart.totalCost} + '0'">$2,978.24</span></p>
+                </div>
+            </div>
+            <div class="row cart-detail" th:each="item : ${cart.items}">
+
+                <div class="col-lg-4 col-sm-4 col-4 cart-detail-img">
+                    <img th:src="${item.value.imagePath}">
+                </div>
+                <div class="col-lg-8 col-sm-8 col-8 cart-detail-product">
+                    <div class="row">
+                        <p class="col-sm-9" th:text="${item.value.name}">Apple</p>
+                        <form action="/update-cart" method="post" class="col-sm-3">
+                            <input type="hidden" name="key" th:value="${item.key}">
+                            <input type="hidden" name="quantity" th:value="0"/>
+                            <button type="submit" class="close" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </form>
+                    </div>
+                    <span class="price text-info" th:text="'$' + ${item.value.price} + 0"> $250.22</span>
+                    <span class="count" th:text="'Quantity:' + ${item.value.quantity}"> Quantity:01</span>
+                </div>
+            </div>
+
+            <div class="checkout">
+                <a href="/checkout" class="checkout-button btn btn-primary btn-block">Checkout</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+
+<div class="cards-container mx-auto">
+
+    <div class="alert alert-success alert-dismissible fade show" style="display:none;" role="alert"
+         id="itemAddedSuccess">
+        <strong>Success!</strong> New item has been added to the cart!
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <div class="row card-row">
+        <div class="col-sm-4" th:each="item : ${shop.items}">
+            <div class="card">
+                <img class="card-img-top" th:src="${item.value.imagePath}" alt="Card image cap">
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${item.value.name}">Apple</h5>
+                    <p class="card-text" th:text="${item.value.description}">Freshly picked apple, eat while its fresh.
+                        Delivery within 3 days.</p>
+                    <form action="/update-cart" method="post">
+                        <dl class="row">
+                            <input type="hidden" name="key" th:value="${item.key}"/>
+
+                            <dt class="col-sm-6">Price</dt>
+                            <dd class="col-sm-6" th:text="'$' + ${item.value.price} + 0">$2.00</dd>
+                            <dt class="col-sm-6">Quantity</dt>
+                            <dd class="col-sm-6">
+                                <input type="number" name="quantity" th:value="${item.value.quantity}"
+                                       class="form-control" min="1" max="100"/>
+                                <span class="validity"></span>
+                            </dd>
+                        </dl>
+                        <button class="btn btn-primary btn-lg btn-block" type="submit">Add to cart</button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+        integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+        integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+        crossorigin="anonymous"></script>
+<script>
+    //show the success message when item is added
+    if (window.location.search.substr(1) == "success") {
+        $('#itemAddedSuccess').show();
+    }
+</script>
+</body>
+</html>
