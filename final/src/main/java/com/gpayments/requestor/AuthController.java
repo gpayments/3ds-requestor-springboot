@@ -1,7 +1,5 @@
 package com.gpayments.requestor;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gpayments.requestor.dto.activeserver.AcctInfo;
 import com.gpayments.requestor.dto.activeserver.AuthRequestBRW;
 import com.gpayments.requestor.dto.activeserver.AuthResponseBRW;
@@ -36,18 +34,15 @@ public class AuthController {
   private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
   private final RestTemplate restTemplate;
   private final TransactionManager transMgr;
-  private final ObjectMapper objectMapper;
 
   static final String THREE_DS_SERVER_URL = "https://api.as.testlab.3dsecure.cloud:9443";
   private final String THREE_DS_REQUESTOR_URL = "http://localhost:8082";
 
   @Autowired
   public AuthController(
-      RestTemplate restTemplate, TransactionManager transMgr,
-      ObjectMapper objectMapper) {
+      RestTemplate restTemplate, TransactionManager transMgr) {
     this.restTemplate = restTemplate;
     this.transMgr = transMgr;
-    this.objectMapper = objectMapper;
   }
 
   /**
@@ -96,7 +91,7 @@ public class AuthController {
   }
 
   @PostMapping("/auth")
-  public AuthResponseBRW auth(@RequestParam("id") String transId) throws JsonProcessingException {
+  public AuthResponseBRW auth(@RequestParam("id") String transId) {
 
     MerchantTransaction transaction = transMgr.findTransaction(transId);
 
@@ -113,7 +108,7 @@ public class AuthController {
     AuthResponseBRW response =
         restTemplate.postForObject(brwUrl, authRequest, AuthResponseBRW.class);
 
-    logger.info("authResponseBRW {}", objectMapper.writeValueAsString(response));
+    logger.info("authResponseBRW {}", response);
 
     return response;
   }
