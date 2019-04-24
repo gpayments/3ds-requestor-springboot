@@ -1,16 +1,17 @@
 package com.gpayments.requestor;
 
-import com.gpayments.requestor.dto.Cart;
-import com.gpayments.requestor.dto.Item;
-import com.gpayments.requestor.dto.Shop;
+import static com.gpayments.requestor.AuthController.THREE_DS_SERVER_URL;
+
 import com.gpayments.requestor.dto.activeserver.AuthResponseBRW;
+import com.gpayments.requestor.services.CardHolderService;
+import com.gpayments.requestor.services.CartService;
+import com.gpayments.requestor.services.ShopService;
 import com.gpayments.requestor.transaction.MerchantTransaction;
 import com.gpayments.requestor.transaction.TransactionManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,86 +20,98 @@ import org.springframework.web.client.RestTemplate;
 
 /**
  * @author GPayments ON 31/07/2018 MainConroller class with handler methods.
- **/
+ */
 @Controller
 @RequestMapping("/")
 public class MainController {
 
-  private static final Logger logger = LoggerFactory.getLogger(MainController.class);
   private final TransactionManager transMgr;
-  private final Shop shop;
-  private final Cart cart;
   private final RestTemplate restTemplate;
+  private final CartService cartService;
+  private final ShopService shopService;
+  private final CardHolderService cardHolderService;
+
 
   @Autowired
   public MainController(
       TransactionManager threeDSRequestorTransactionManager,
-      Shop shop,
-      Cart cart,
+      ShopService shopService,
+      CartService cartService,
+      CardHolderService cardHolderService,
       RestTemplate restTemplate) {
+
     this.transMgr = threeDSRequestorTransactionManager;
-    this.shop = shop;
-    this.cart = cart;
+    this.shopService = shopService;
+    this.cartService = cartService;
+    this.cardHolderService = cardHolderService;
     this.restTemplate = restTemplate;
   }
 
-  @GetMapping
-  public String main(Model model) {
+  @RequestMapping
+  public String main(
+      @RequestParam(value = "key", required = false) String key,
+      @RequestParam(value = "quantity", required = false) Integer quantity,
+      @RequestParam(value = "clear", required = false) String clearItem,
+      Model model) {
 
-    model.addAttribute("cart", cart);
-    model.addAttribute("shop", shop);
+    if (!StringUtils.isEmpty(key)) {
+
+      if ("true".equals(clearItem)) {
+        cartService.clear(key);
+      } else {
+
+        if (quantity != null && quantity > 0) {
+
+          cartService.updateCart(key, quantity);
+        }
+      }
+    }
+    model.addAttribute("cart", cartService.getMyCart());
+    model.addAttribute("items", shopService.getItems());
 
     return "index";
   }
 
-  @PostMapping("/update-cart")
-  public String updateCart(@RequestParam(value = "key") String key,
-      @RequestParam(value = "quantity") int quantity,
-      Model model) {
-
-    // if the quantity is zero just remove it
-    if (quantity == 0) {
-      cart.clearItem(key);
-      return "redirect:/"; //redirect to index
-    }
-
-    // add to cart otherwise
-    Item item = shop.findItem(key);
-    cart.addToCart(item, quantity);
-    return "redirect:/?success";
-  }
-
   @GetMapping("/checkout")
-  public String checkout(
-      Model model) {
+  public String checkout(Model model) {
 
     MerchantTransaction transactionInfo = transMgr.newTransaction();
 
-    model.addAttribute("cart", cart);
+    model.addAttribute("cart", cartService.getMyCart());
     model.addAttribute("transId", transactionInfo.getId());
+    model.addAttribute("cardholder", cardHolderService.getDefaultCardHolder());
 
     return "checkout";
   }
 
   @GetMapping("/auth/result")
-  public String result(
-      @RequestParam("txid") String transId,
-      Model model) {
+  public String result(@RequestParam("txid") String transId, Model model) {
 
     MerchantTransaction transaction = transMgr.findTransaction(transId);
 
-    String resultUrl = AuthController.THREE_DS_SERVER_URL + "/brw/result?threeDSServerTransID=" +
-        transaction.getInitAuthResponseBRW().getThreeDSServerTransID();
-    AuthResponseBRW response = restTemplate.getForObject(resultUrl, AuthResponseBRW.class);
+    String resultUrl =
+        THREE_DS_SERVER_URL
+            + "/api/v1/brw/result?threeDSServerTransID="
+            + transaction.getInitAuthResponseBRW().getThreeDSServerTransID();
 
-    //convey result to the page.
-    model.addAttribute("result", response);
-    //make a copy of cart just for displaying
-    model.addAttribute("cart", new Cart(cart));
+    // make a copy of cart just for displaying
+    model.addAttribute("cart", cartService.getMyCart());
     // clear the actual cart content
-    cart.clearItem("all");
+    cartService.clear(null);
 
-    return "result";
+    try {
+      AuthResponseBRW response = restTemplate.getForObject(resultUrl, AuthResponseBRW.class);
+      // convey result to the page.
+      model.addAttribute("result", response);
+      return "result";
+    } catch (Exception e) {
+
+      AuthResponseBRW response = new AuthResponseBRW();
+      response.setErrorDetail(e.getMessage());
+      // convey result to the page.
+      model.addAttribute("result", response);
+      return "error";
+    }
   }
 
   @PostMapping("/3ds-notify")
@@ -129,5 +142,4 @@ public class MainController {
 
     return "notify_3ds_events";
   }
-
 }

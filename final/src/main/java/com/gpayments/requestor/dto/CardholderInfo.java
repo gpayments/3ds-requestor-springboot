@@ -24,10 +24,14 @@ public class CardholderInfo {
     private String shipAddrPostCode;
     private String shipAddrState;
 
-    public CardholderInfo() {
+    public CardholderInfo(String cardNumber) {
         // default data
-        this.cardNumber = "4123450000002";
-        this.cardExpiry = "2101";
+        // this.cardNumber = "4123450000002";
+        // this.cardNumber = "4100000000000011";
+
+        this.cardNumber = cardNumber;
+
+        this.cardExpiry = "2508";
         this.billAddrCity = "Sydney";
         this.billAddrCountry = "Australia";
         this.billAddrLine1 = "Unit 1";
@@ -186,24 +190,58 @@ public class CardholderInfo {
 
     @Override
     public String toString() {
-        return "CardholderInfo{" +
-                "cardNumber='" + cardNumber + '\'' +
-                ", cardExpiry='" + cardExpiry + '\'' +
-                ", billAddrCity='" + billAddrCity + '\'' +
-                ", billAddrCountry='" + billAddrCountry + '\'' +
-                ", billAddrLine1='" + billAddrLine1 + '\'' +
-                ", billAddrLine2='" + billAddrLine2 + '\'' +
-                ", billAddrPostCode='" + billAddrPostCode + '\'' +
-                ", billAddrState='" + billAddrState + '\'' +
-                ", email='" + email + '\'' +
-                ", phoneNumber='" + phoneNumber + '\'' +
-                ", cardholderName='" + cardholderName + '\'' +
-                ", shipAddrCity='" + shipAddrCity + '\'' +
-                ", shipAddrCountry='" + shipAddrCountry + '\'' +
-                ", shipAddrLine1='" + shipAddrLine1 + '\'' +
-                ", shipAddrLine2='" + shipAddrLine2 + '\'' +
-                ", shipAddrPostCode='" + shipAddrPostCode + '\'' +
-                ", shipAddrState='" + shipAddrState + '\'' +
-                '}';
+        return "CardholderInfo{"
+            + "cardNumber='"
+            + cardNumber
+            + '\''
+            + ", cardExpiry='"
+            + cardExpiry
+            + '\''
+            + ", billAddrCity='"
+            + billAddrCity
+            + '\''
+            + ", billAddrCountry='"
+            + billAddrCountry
+            + '\''
+            + ", billAddrLine1='"
+            + billAddrLine1
+            + '\''
+            + ", billAddrLine2='"
+            + billAddrLine2
+            + '\''
+            + ", billAddrPostCode='"
+            + billAddrPostCode
+            + '\''
+            + ", billAddrState='"
+            + billAddrState
+            + '\''
+            + ", email='"
+            + email
+            + '\''
+            + ", phoneNumber='"
+            + phoneNumber
+            + '\''
+            + ", cardholderName='"
+            + cardholderName
+            + '\''
+            + ", shipAddrCity='"
+            + shipAddrCity
+            + '\''
+            + ", shipAddrCountry='"
+            + shipAddrCountry
+            + '\''
+            + ", shipAddrLine1='"
+            + shipAddrLine1
+            + '\''
+            + ", shipAddrLine2='"
+            + shipAddrLine2
+            + '\''
+            + ", shipAddrPostCode='"
+            + shipAddrPostCode
+            + '\''
+            + ", shipAddrState='"
+            + shipAddrState
+            + '\''
+            + '}';
     }
 }

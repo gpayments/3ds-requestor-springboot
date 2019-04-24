@@ -1,53 +1,57 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="en">
 <head>
     <meta charset="UTF-8"/>
     <title>3DSecure 2.0 Authentication</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
-          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+          crossorigin="anonymous">
     <link rel="stylesheet" href="css/style.css"/>
     <link rel="stylesheet" href="css/spinner.css"/>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css"
-          integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+          integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ"
+          crossorigin="anonymous">
 </head>
 <body>
 
 <nav class="navbar navbar-light bg-light justify-content-between">
-    <a class="navbar-brand" href="/">The Shop</a>
+    <a class="navbar-brand" href="/">Test Lab Shop</a>
     <div class="dropdown">
         <button type="button" class="btn btn-dark" data-toggle="dropdown">
             <i class="fa fa-shopping-cart" aria-hidden="true"></i> Cart <span
-                class="badge badge-pill badge-danger" th:text="${cart.totalNumItems}">3</span>
+            class="badge badge-pill badge-danger" data-th-text="${cart.count}">3</span>
         </button>
 
         <div class="dropdown-menu">
             <div class="row total-header-section">
                 <div class="col-lg-6 col-sm-6 col-6">
                     <i class="fa fa-shopping-cart" aria-hidden="true"></i> <span
-                        class="badge badge-pill badge-danger" th:text="${cart.totalNumItems}">3</span>
+                    class="badge badge-pill badge-danger" data-th-text="${cart.count}">3</span>
                 </div>
                 <div class="col-lg-6 col-sm-6 col-6 total-section text-right">
-                    <p>Total: <span class="text-info" th:text="'$' + ${cart.totalCost} + '0'">$2,978.24</span></p>
+                    <p>Total: <span class="text-info"
+                                    data-th-text="'$' + ${cart.totalPrice} + '0'">$2,978.24</span>
+                    </p>
                 </div>
             </div>
-            <div class="row cart-detail" th:each="item : ${cart.items}">
+            <div class="row cart-detail" data-th-each="item : ${cart.items}">
 
                 <div class="col-lg-4 col-sm-4 col-4 cart-detail-img">
-                    <img th:src="${item.value.imagePath}">
+                    <img data-th-src="${item.value.imagePath}">
                 </div>
                 <div class="col-lg-8 col-sm-8 col-8 cart-detail-product">
                     <div class="row">
-                        <p class="col-sm-9" th:text="${item.value.name}">Apple</p>
-                        <form action="/update-cart" method="post" class="col-sm-3">
-                            <input type="hidden" name="key" th:value="${item.key}">
-                            <input type="hidden" name="quantity" th:value="0"/>
-                            <button type="submit" class="close" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </form>
+                        <p class="col-sm-9" data-th-text="${item.value.name}">Apple</p>
+                        <div class="col-sm-3">
+                            <input type="hidden" name="key" data-th-value="${item.key}">
+                            <input type="hidden" name="quantity" data-th-value="0"/>
+                        </div>
                     </div>
-                    <span class="price text-info" th:text="'$' + ${item.value.price} + 0"> $250.22</span>
-                    <span class="count" th:text="'Quantity:' + ${item.value.quantity}"> Quantity:01</span>
+                    <span class="price text-info"
+                          data-th-text="'$' + ${item.value.unitPrice} + 0"> $250.22</span>
+                    <span class="count"
+                          data-th-text="'Quantity:' + ${item.value.quantity}"> Quantity:01</span>
                 </div>
             </div>
 
@@ -93,6 +97,36 @@
                 <div class="card-header">Cardholder Information</div>
                 <form class="card-body" id="cardholder-info-form">
 
+                    <h4 class="mb-3">Payment</h4>
+                    <dl class="row">
+                        <dt class="col-sm-4">Name on card</dt>
+                        <dd class="col-sm-8">
+                            <input type="text" id="cardholderName" class="form-control"
+                                   data-th-value="${cardholder.cardholderName}" required
+                                   title="cardholderName"/>
+                        <dt class="col-sm-4">Card Number</dt>
+                        <dd class="col-sm-8">
+                            <input type="text" id="cardNumber" class="form-control"
+                                   data-th-value="${cardholder.cardNumber}" required
+                                   title="cardNumber"/>
+                        </dd>
+
+                        <dt class="col-sm-4">Expiry Date (YYMM)</dt>
+                        <dd class="col-sm-8">
+                            <input type="text" id="cardExpiry" class="form-control"
+                                   data-th-value="${cardholder.cardExpiry}" required
+                                   title="expiry date"/>
+                        </dd>
+                        <dt class="col-sm-4">Currency</dt>
+                        <dd class="col-sm-8">
+                            <input type="text" id="purchaseCurrency" class="form-control"
+                                   value="036" required
+                                   title="purchase currency"/>
+                        </dd>
+                    </dl>
+
+                    <hr class="mb-4"/>
+
                     <h4 class="card-title">Billing details</h4>
                     <p class="card-text">Enter your billing details and click "Continue to checkout".</p>
                     <dl class="row">
@@ -127,7 +161,9 @@
                         </dd>
                         <dt class="col-sm-4">Country</dt>
                         <dd class="col-sm-8">
-                            <input type="text" id="billAddrCountry" class="form-control" value="Australia" required
+                            <input type="text" id="billAddrCountry" class="form-control"
+                                   value="Australia"
+                                   required
                                    title="billAddrCountry"/>
                         </dd>
 
@@ -138,25 +174,6 @@
                         </dd>
                     </dl>
 
-                    <hr class="mb-4"/>
-                    <h4 class="mb-3">Payment</h4>
-                    <dl class="row">
-                        <dt class="col-sm-4">Name on card</dt>
-                        <dd class="col-sm-8">
-                            <input type="text" id="cardholderName" class="form-control" value="Suda Ichiro" required
-                                   title="cardholderName"/>
-                        <dt class="col-sm-4">Card Number</dt>
-                        <dd class="col-sm-8">
-                            <input type="text" id="cardNumber" class="form-control" value="4123450000002" required
-                                   title="cardNumber"/>
-                        </dd>
-
-                        <dt class="col-sm-4">Expiry Date (YYMM)</dt>
-                        <dd class="col-sm-8">
-                            <input type="text" id="cardExpiry" class="form-control" value="2010" required
-                                   title="expiry date"/>
-                        </dd>
-                    </dl>
                     <hr class="mb-4"/>
                     <div class="row">
 
@@ -197,7 +214,8 @@
                             </dd>
                             <dt class="col-sm-4">Address Line 2</dt>
                             <dd class="col-sm-8">
-                                <input type="text" id="shipAddrLine2" class="form-control" value="123 Street Suburb"
+                                <input type="text" id="shipAddrLine2" class="form-control"
+                                       value="123 Street"
                                        required title="shipping address 2"/>
                             </dd>
                             <dt class="col-sm-4">City</dt>
@@ -217,7 +235,9 @@
                             </dd>
                             <dt class="col-sm-4">Country</dt>
                             <dd class="col-sm-8">
-                                <input type="text" id="shipAddrCountry" class="form-control" value="Australia" required
+                                <input type="text" id="shipAddrCountry" class="form-control"
+                                       value="Australia"
+                                       required
                                        title="shipping address country"/>
                             </dd>
                         </d1>
@@ -228,32 +248,37 @@
         <div class="col-sm-4 mb-4">
             <h4 class="d-flex justify-content-between align-items-center mb-3">
                 <span class="text-muted">Your cart</span>
-                <span class="badge badge-secondary badge-pill" th:text="${cart.totalNumItems}">3</span>
+                <span class="badge badge-secondary badge-pill" data-th-text="${cart.count}">3</span>
             </h4>
             <ul class="list-group mb-3">
-                <li class="list-group-item d-flex justify-content-between lh-condensed" th:each="item : ${cart.items}">
+                <li class="list-group-item d-flex justify-content-between lh-condensed"
+                    data-th-each="item : ${cart.items}">
                     <div class="row cart-detail">
                         <div class="col-lg-4 col-sm-4 col-4 cart-detail-img">
-                            <img th:src="${item.value.imagePath}">
+                            <img data-th-src="${item.value.imagePath}">
                         </div>
                         <div class="col-lg-8 col-sm-8 col-8 cart-detail-product">
-                            <p th:text="${item.value.name}">Apple</p>
-                            <span class="price text-info" th:text="'$' + ${item.value.price} + 0"> $250.22</span>
-                            <span class="count" th:text="'Quantity:' + ${item.value.quantity}"> Quantity:01</span>
+                            <p data-th-text="${item.value.name}">Apple</p>
+                            <span class="price text-info"
+                                  data-th-text="'$' + ${item.value.unitPrice} + 0"> $250.22</span>
+                            <span class="count"
+                                  data-th-text="'Quantity:' + ${item.value.quantity}"> Quantity:01</span>
                         </div>
                     </div>
                 </li>
                 <li class="list-group-item d-flex justify-content-between">
                     <span>Total (USD)</span>
-                    <strong th:text="'$' + ${cart.totalCost} + 0"></strong>
+                    <strong data-th-text="'$' + ${cart.totalPrice} + 0"></strong>
+                    <input type="hidden" id="totalPrice" data-th-value="${cart.totalPrice}"/>
                 </li>
 
                 <div id="checkoutButton">
-                    <button th:if="${cart.totalNumItems} > 0" class="btn btn-primary btn-lg btn-block"
+                    <button data-th-if="${cart.count} > 0" class="btn btn-primary btn-lg btn-block"
                             onclick="checkout()">Continue to checkout
                     </button>
                     <!--disable button if no items added-->
-                    <button th:if="${cart.totalNumItems} == 0" class="btn btn-primary btn-lg btn-block disabled">
+                    <button data-th-if="${cart.count} == 0"
+                            class="btn btn-primary btn-lg btn-block disabled">
                         Continue to checkout
                     </button>
                 </div>
@@ -263,7 +288,7 @@
 
     </div>
 
-    <input type="hidden" id="transId" th:value="${transId}"/>
+    <input type="hidden" id="transId" data-th-value="${transId}"/>
 
 </div>
 
@@ -273,10 +298,10 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
         integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
         crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
-        integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
         crossorigin="anonymous"></script>
-
+<script src="/js/3ds-web-adapter.js"></script>
 
 <script>
     function showAdvancedDetails(toShow) {
@@ -323,8 +348,8 @@
 
         var purchaseInfo = {
             acctNumber: $('#cardNumber').val(),
-            purchaseAmount: '100',
-            purchaseCurrency: '840', //USD
+            purchaseAmount: $('#totalPrice').val() * 100,
+            purchaseCurrency: $('#purchaseCurrency').val(), // ISO 4217
             expiryDate: $('#cardExpiry').val()
         };
 
@@ -334,9 +359,7 @@
         $("#cardholderInfoCard").remove();
         $("#checkoutCard").removeClass("d-none");
 
-
-        //move to result screen 2 seconds after
-        setTimeout(function () {window.location.href = "/auth/result"}, 2000);
+        threeDSAuth(transId, cardHolderInfo, purchaseInfo);
     }
 </script>
 </body>

@@ -1,9 +1,0 @@
-# Test scenarios and corresponding card numbers
-Below is the list of card numbers range and the test scenarios you can test with that card number.
-
-* Frictionless - 4123450000000 ~ 4123454999999
-* Challenge - 4123455000000 ~ 4123459999999
-
-Default one time password for challenge scenarios - 123456
-
-Usage: if you use card number in between 4123450000000 ~ 4123454999999 you can test the frictionless scenario. If you use card number in between 4123455000000 ~ 4123459999999 you can test the challenge scenario.

@@ -21,7 +21,6 @@ import org.springframework.web.client.RestTemplate;
 public class RestClientConfig {
 
   private static final String KEYSTORE_PASSWORD = "123456";
-  private static final String KEY_ENTRY_PASSWORD = "123456";
   private static final String CA_CERTS_FILE_NAME = "certs/cacerts.jks";
   private static final String CLIENT_CERTS_FILE_NAME = "certs/client_certificate.p12";
 
@@ -34,7 +33,7 @@ public class RestClientConfig {
             .loadKeyMaterial(
                 new ClassPathResource(CLIENT_CERTS_FILE_NAME).getURL(),
                 KEYSTORE_PASSWORD.toCharArray(),
-                KEY_ENTRY_PASSWORD.toCharArray())
+                KEYSTORE_PASSWORD.toCharArray())
             .loadTrustMaterial(
                 new ClassPathResource(CA_CERTS_FILE_NAME).getURL(), KEYSTORE_PASSWORD.toCharArray())
             .build();

@@ -36,8 +36,8 @@ public class AuthController {
   private final TransactionManager transMgr;
 
   // ActiveServer entry points for authentication
-  public static final String THREE_DS_SERVER_URL = "https://api.asuat.testlab.3dsecure.cloud:9443/api/v1/auth";
-  private final String THREE_DS_REQUESTOR_URL = "http://localhost:8082";
+  static final String THREE_DS_SERVER_URL = "https://api.as.testlab.3dsecure.cloud:9443";
+  private static final String THREE_DS_REQUESTOR_URL = "http://localhost:8082";
 
   @Autowired
   public AuthController(RestTemplate restTemplate, TransactionManager transMgr) {
@@ -58,7 +58,7 @@ public class AuthController {
 
     logger.info("initAuthRequest {}", request);
 
-    String initBrwUrl = THREE_DS_SERVER_URL + "/brw/init/pa";
+    String initBrwUrl = THREE_DS_SERVER_URL + "/api/v1/auth/brw/init/pa";
 
     // Initialise authentication by making  POST request to /brw/init/{messageCategory} (Step. 3)
     RequestEntity<InitAuthRequestBRW> req =
@@ -94,7 +94,7 @@ public class AuthController {
     authRequest
         .setThreeDSServerTransID(transaction.getInitAuthResponseBRW().getThreeDSServerTransID());
 
-    String brwUrl = THREE_DS_SERVER_URL + "/brw";
+    String brwUrl = THREE_DS_SERVER_URL + "/api/v1/auth/brw";
     AuthResponseBRW response = restTemplate
         .postForObject(brwUrl, authRequest, AuthResponseBRW.class);
 

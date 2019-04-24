@@ -1,30 +1,23 @@
 package com.gpayments.requestor.dto;
 
+
 /**
- * @author GPayments ON 31/07/2018
- * Item for the shopping site
+ * @author GPayments ON 31/07/2018 Item for the shopping site
  */
 public class Item {
+
     private String name;
     private String description;
     private int quantity;
-    private float price;
+  private double unitPrice;
     private String imagePath;
 
-    public Item(String name, String description, int quantity, float price, String imagePath) {
+  public Item(String name, String description, int quantity, double unitPrice, String imagePath) {
         this.name = name;
         this.description = description;
         this.quantity = quantity;
-        this.price = price;
+    this.unitPrice = unitPrice;
         this.imagePath = imagePath;
-    }
-
-    public Item(Item item) {
-        this.name = item.getName();
-        this.description = item.getDescription();
-        this.quantity = item.getQuantity();
-        this.price = item.getPrice();
-        this.imagePath = item.getImagePath();
     }
 
     public String getDescription() {
@@ -51,14 +44,6 @@ public class Item {
         this.quantity = quantity;
     }
 
-    public float getPrice() {
-        return price;
-    }
-
-    public void setPrice(float price) {
-        this.price = price;
-    }
-
     public String getImagePath() {
         return imagePath;
     }
@@ -67,15 +52,38 @@ public class Item {
         this.imagePath = imagePath;
     }
 
+  public double getUnitPrice() {
+    return unitPrice;
+  }
+
+  public void setUnitPrice(double unitPrice) {
+    this.unitPrice = unitPrice;
+  }
+
+  public double getTotalPrice() {
+    return quantity * unitPrice;
+  }
+
+  public void inclQuantity(int quantity) {
+    this.quantity += quantity;
+  }
 
     @Override
     public String toString() {
-        return "Item{" +
-                "name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", quantity=" + quantity +
-                ", price=" + price +
-                ", imagePath='" + imagePath + '\'' +
-                '}';
+      return "Item{"
+          + "name='"
+          + name
+          + '\''
+          + ", description='"
+          + description
+          + '\''
+          + ", quantity="
+          + quantity
+          + ", unitPrice="
+          + unitPrice
+          + ", imagePath='"
+          + imagePath
+          + '\''
+          + '}';
     }
 }
