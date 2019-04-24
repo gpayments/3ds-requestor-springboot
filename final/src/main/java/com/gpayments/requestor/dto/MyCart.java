@@ -8,45 +8,45 @@ import java.util.Map;
  */
 public class MyCart {
 
-    private final Map<String, Item> items = new HashMap<>();
+  private final Map<String, Item> items = new HashMap<>();
 
   private double totalPrice;
 
   private int count;
 
-    /**
-     * This method will add the item to the cart with specific quantity
-     */
-    public void addItem(Item item, int quantity) {
+  /**
+   * This method will add the item to the cart with specific quantity
+   */
+  public void addItem(Item item, int quantity) {
 
-      Item existing = items.get(item.getName());
+    Item existing = items.get(item.getName());
 
-        // if it contains the key just add the quantity and price
-      if (existing != null) {
-        existing.inclQuantity(quantity);
+    // if it contains the key just add the quantity and price
+    if (existing != null) {
+      existing.inclQuantity(quantity);
 
-        } else {
-        item.setQuantity(quantity);
-        items.put(item.getName(), item);
-        }
-
-        updateTotal();
+    } else {
+      item.setQuantity(quantity);
+      items.put(item.getName(), item);
     }
+
+    updateTotal();
+  }
 
   /**
    * Helper method to update the count and totalPrice
    */
-    private void updateTotal() {
+  private void updateTotal() {
 
-      double total = 0;
-      int count = 0;
-      for (Item item : items.values()) {
-        total += item.getTotalPrice();
-        count += item.getQuantity();
-      }
-      this.totalPrice = total;
-      this.count = count;
+    double total = 0;
+    int count = 0;
+    for (Item item : items.values()) {
+      total += item.getTotalPrice();
+      count += item.getQuantity();
     }
+    this.totalPrice = total;
+    this.count = count;
+  }
 
   public double getTotalPrice() {
     return totalPrice;
@@ -54,11 +54,11 @@ public class MyCart {
 
   public int getCount() {
     return count;
-    }
+  }
 
-    public Map<String, Item> getItems() {
-        return items;
-    }
+  public Map<String, Item> getItems() {
+    return items;
+  }
 
   /**
    * This method will clear the item with certain key, if key is null it will clear all items
@@ -71,5 +71,5 @@ public class MyCart {
       items.remove(key);
     }
     updateTotal();
-    }
+  }
 }

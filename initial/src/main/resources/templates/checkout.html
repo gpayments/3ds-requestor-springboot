@@ -359,7 +359,10 @@
         $("#cardholderInfoCard").remove();
         $("#checkoutCard").removeClass("d-none");
 
-        threeDSAuth(transId, cardHolderInfo, purchaseInfo);
+        //move to result screen 2 seconds after
+        setTimeout(function () {
+            window.location.href = "/auth/result"
+        }, 2000);
     }
 </script>
 </body>

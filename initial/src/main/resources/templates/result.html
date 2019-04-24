@@ -1,78 +1,68 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
-          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css"
-          integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
-    <link rel="stylesheet" href="/css/style.css"/>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <link rel="stylesheet"
+        href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+        crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css"
+        integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ"
+        crossorigin="anonymous">
+  <link rel="stylesheet" href="/css/style.css"/>
 </head>
 <body>
 <nav class="navbar navbar-light bg-light justify-content-between">
-    <a class="navbar-brand" href="/">The Shop</a>
-    <div class="dropdown">
-        <button type="button" class="btn btn-dark" data-toggle="dropdown">
-            <i class="fa fa-shopping-cart" aria-hidden="true"></i> Cart <span
-                class="badge badge-pill badge-danger">0</span>
-        </button>
-
-        <div class="dropdown-menu">
-            <div class="row total-header-section">
-                <div class="col-lg-6 col-sm-6 col-6">
-                    <i class="fa fa-shopping-cart" aria-hidden="true"></i> <span
-                        class="badge badge-pill badge-danger">0</span>
-                </div>
-                <div class="col-lg-6 col-sm-6 col-6 total-section text-right">
-                    <p>Total: <span class="text-info">$0.00</span></p>
-                </div>
-            </div>
-        </div>
-    </div>
+  <a class="navbar-brand" href="/">The Shop</a>
+  <div class="button">Back</div>
 </nav>
 
 <div class="mx-auto container">
-    <div class="row card-row">
+  <div class="row card-row">
 
-        <div class="col-sm-8">
-            <div class="card">
-                <div class="card-header">Transaction successful</div>
-                <div class="card-body">
-                    <h4 class="card-title text-success">Thank you for your purchase!</h4>
-                    <p class="card-text">Want to continue shopping? Press "Back to Home".</p>
+    <div class="col-sm-8">
+      <div class="card">
+        <div class="card-header">Transaction successful</div>
+        <div class="card-body">
+          <h4 class="card-title text-success">Thank you for your purchase!</h4>
+          <p class="card-text">Want to continue shopping? Press "Back to Home".</p>
 
-                    <a href="/" class="btn btn-primary btn-block">Back to Home</a>
+          <a href="/" class="btn btn-primary btn-block">Back to Home</a>
 
-                </div>
-            </div>
         </div>
-
-        <div class="col-sm-4 mb-4">
-            <h4 class="d-flex justify-content-between align-items-center mb-3">
-                <span class="text-muted">Your Purchase</span>
-                <span class="badge badge-secondary badge-pill" th:text="${cart.totalNumItems}">3</span>
-            </h4>
-            <ul class="list-group mb-3">
-                <li class="list-group-item d-flex justify-content-between lh-condensed" th:each="item : ${cart.items}">
-                    <div class="row cart-detail">
-                        <div class="col-lg-4 col-sm-4 col-4 cart-detail-img">
-                            <img th:src="${item.value.imagePath}">
-                        </div>
-                        <div class="col-lg-8 col-sm-8 col-8 cart-detail-product">
-                            <p th:text="${item.value.name}">Apple</p>
-                            <span class="price text-info" th:text="'$' + ${item.value.price} + 0"> $250.22</span>
-                            <span class="count" th:text="'Quantity:' + ${item.value.quantity}"> Quantity:01</span>
-                        </div>
-                    </div>
-                </li>
-                <li class="list-group-item d-flex justify-content-between">
-                    <span>Total (USD)</span>
-                    <strong th:text="'$' + ${cart.totalCost} + 0"></strong>
-                </li>
-            </ul>
-        </div>
+      </div>
     </div>
+
+    <div class="col-sm-4 mb-4">
+      <h4 class="d-flex justify-content-between align-items-center mb-3">
+        <span class="text-muted">Your purchase</span>
+        <span class="badge badge-secondary badge-pill" data-th-text="${cart.count}">3</span>
+      </h4>
+      <ul class="list-group mb-3">
+        <li class="list-group-item d-flex justify-content-between lh-condensed"
+            data-th-each="item : ${cart.items}">
+          <div class="row cart-detail">
+            <div class="col-lg-4 col-sm-4 col-4 cart-detail-img">
+              <img data-th-src="${item.value.imagePath}">
+            </div>
+            <div class="col-lg-8 col-sm-8 col-8 cart-detail-product">
+              <p data-th-text="${item.value.name}">Apple</p>
+              <span class="price text-info"
+                    data-th-text="'$' + ${item.value.unitPrice} + 0"> $250.22</span>
+              <span class="count"
+                    data-th-text="'Quantity:' + ${item.value.quantity}"> Quantity:01</span>
+            </div>
+          </div>
+        </li>
+        <li class="list-group-item d-flex justify-content-between">
+          <span>Total (USD)</span>
+          <strong data-th-text="'$' + ${cart.totalPrice} + 0"></strong>
+          <input type="hidden" id="totalPrice" data-th-value="${cart.totalPrice}"/>
+        </li>
+      </ul>
+    </div>
+  </div>
 
 </div>
 
@@ -83,8 +73,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
         integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
         crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
-        integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
         crossorigin="anonymous"></script>
 </body>
 </html>

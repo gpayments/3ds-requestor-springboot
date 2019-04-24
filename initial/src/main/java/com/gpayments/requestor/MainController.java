@@ -10,7 +10,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -77,32 +76,14 @@ public class MainController {
     return "checkout";
   }
 
-  @PostMapping("/3ds-notify")
-  public String notifyResult(
-      @RequestParam("requestorTransId") String transId,
-      @RequestParam("event") String callbackType,
-      @RequestParam(name = "param", required = false) String param,
-      Model model) {
+  @GetMapping("/auth/result")
+  public String result(Model model) {
 
-    String callbackName;
-    if ("3DSMethodFinished".equals(callbackType)) {
+    // make a copy of cart just for displaying
+    model.addAttribute("cart", cartService.getMyCart());
+    // clear the actual cart content
+    cartService.clear(null);
 
-      callbackName = "_on3DSMethodFinished";
-
-    } else if ("3DSMethodSkipped".equals(callbackType)) {
-
-      callbackName = "_on3DSMethodSkipped";
-
-    } else if ("AuthResultReady".equals(callbackType)) {
-      callbackName = "_onAuthResult";
-    } else {
-      throw new IllegalArgumentException("invalid callback type");
-    }
-
-    model.addAttribute("transId", transId);
-    model.addAttribute("callbackName", callbackName);
-    model.addAttribute("callbackParam", param);
-
-    return "notify_3ds_events";
+    return "result";
   }
 }
