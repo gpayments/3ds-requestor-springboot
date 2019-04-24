@@ -8,6 +8,8 @@ import com.gpayments.requestor.services.CartService;
 import com.gpayments.requestor.services.ShopService;
 import com.gpayments.requestor.transaction.MerchantTransaction;
 import com.gpayments.requestor.transaction.TransactionManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,6 +26,8 @@ import org.springframework.web.client.RestTemplate;
 @Controller
 @RequestMapping("/")
 public class MainController {
+
+  private static final Logger logger = LoggerFactory.getLogger(MainController.class);
 
   private final TransactionManager transMgr;
   private final RestTemplate restTemplate;
@@ -91,7 +95,7 @@ public class MainController {
 
     String resultUrl =
         THREE_DS_SERVER_URL
-            + "/api/v1/brw/result?threeDSServerTransID="
+            + "/api/v1/auth/brw/result?threeDSServerTransID="
             + transaction.getInitAuthResponseBRW().getThreeDSServerTransID();
 
     // make a copy of cart just for displaying
@@ -101,11 +105,12 @@ public class MainController {
 
     try {
       AuthResponseBRW response = restTemplate.getForObject(resultUrl, AuthResponseBRW.class);
+
       // convey result to the page.
       model.addAttribute("result", response);
       return "result";
     } catch (Exception e) {
-
+      logger.error("", e);
       AuthResponseBRW response = new AuthResponseBRW();
       response.setErrorDetail(e.getMessage());
       // convey result to the page.

@@ -3,7 +3,6 @@
 */
 var _authResultCallback = _onAuthResultReady;
 
-
 /*
 Main Entry
 */
@@ -25,18 +24,21 @@ function threeDSAuth(transId, cardHolderInfo, purchaseInfo) {
         }),
         success: function (data) {
             console.log('init auth returns:', data);
-            $('<iframe id="threeds-container" width="0" height="0" style="visibility: hidden;" src="' + data.threeDSServerCallbackUrl + '"></iframe>')
-                .appendTo('.challengeContainer');
+            $('<iframe id="threeds-container" width="0" height="0" style="visibility: hidden;" src="'
+                + data.threeDSServerCallbackUrl + '"></iframe>')
+            .appendTo('.challengeContainer');
         },
-        error: function () {
-            alert('error');
+        error: function (request, status, error) {
+
+            console.log('init auth error', status, error)
+
+            alert(error);
         },
         dataType: 'json'
 
     });
 
 }
-
 
 function _doAuth(transId) {
 
@@ -45,7 +47,6 @@ function _doAuth(transId) {
     //first remove any 3dsmethod iframe
     //TODO: make it dynamic
     $('#threeds-container').remove();
-
 
     $.post("/auth", {id: transId}).done(function (data) {
 
@@ -73,11 +74,10 @@ function _doAuth(transId) {
                 break;
         }
 
-
     })
-        .fail(function (error) {
-            alert('error');
-        });
+    .fail(function (error) {
+        alert('error');
+    });
 
 }
 
@@ -94,11 +94,11 @@ function startChallenge(url) {
     $(".spinner").remove();
 
     //create the iframe
-    $('<iframe src="' + url + '" class="h-100 w-100 border-0" id="challengeWindow" name="challengeWindow"></iframe>')
-        .appendTo('.challengeContainer');
+    $('<iframe src="' + url
+        + '" class="h-100 w-100 border-0" id="challengeWindow" name="challengeWindow"></iframe>')
+    .appendTo('.challengeContainer');
 
 }
-
 
 /**
  Default callback method for Authentication Result Ready Event. This can be customized in MainController.
@@ -118,7 +118,8 @@ function _onAuthResult(transId, authResult) {
  **/
 function _on3DSMethodSkipped(transId) {
 
-    console.log('3DS Method is skipped or not presented, now calling doAuth.', transId);
+    console.log('3DS Method is skipped or not presented, now calling doAuth.',
+        transId);
 
     _doAuth(transId);
 }

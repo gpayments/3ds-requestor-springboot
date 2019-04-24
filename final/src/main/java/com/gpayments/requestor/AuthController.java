@@ -1,5 +1,7 @@
 package com.gpayments.requestor;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gpayments.requestor.dto.activeserver.AcctInfo;
 import com.gpayments.requestor.dto.activeserver.AuthRequestBRW;
 import com.gpayments.requestor.dto.activeserver.AuthResponseBRW;
@@ -34,15 +36,18 @@ public class AuthController {
   private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
   private final RestTemplate restTemplate;
   private final TransactionManager transMgr;
+  private final ObjectMapper objectMapper;
 
-  // ActiveServer entry points for authentication
   static final String THREE_DS_SERVER_URL = "https://api.as.testlab.3dsecure.cloud:9443";
-  private static final String THREE_DS_REQUESTOR_URL = "http://localhost:8082";
+  private final String THREE_DS_REQUESTOR_URL = "http://localhost:8082";
 
   @Autowired
-  public AuthController(RestTemplate restTemplate, TransactionManager transMgr) {
+  public AuthController(
+      RestTemplate restTemplate, TransactionManager transMgr,
+      ObjectMapper objectMapper) {
     this.restTemplate = restTemplate;
     this.transMgr = transMgr;
+    this.objectMapper = objectMapper;
   }
 
   /**
@@ -51,18 +56,26 @@ public class AuthController {
   @PostMapping("/auth/init")
   public InitAuthResponseBRW initAuth(@RequestBody InitAuthRequestBRW request) {
     // find transaction with transaction id
-    MerchantTransaction transactionInfo = transMgr
-        .findTransaction(request.getThreeDSRequestorTransID());
+    MerchantTransaction transactionInfo =
+        transMgr.findTransaction(request.getThreeDSRequestorTransID());
+
+    if (transactionInfo == null) {
+
+      throw new IllegalArgumentException(
+          String.format("transaction (%s) doesn't exists", request.getThreeDSRequestorTransID()));
+    }
+
     // fill the request with default data
     fillInitAuthRequestBRW(request, THREE_DS_REQUESTOR_URL + "/3ds-notify");
 
-    logger.info("initAuthRequest {}", request);
-
     String initBrwUrl = THREE_DS_SERVER_URL + "/api/v1/auth/brw/init/pa";
+
+    logger.info("initAuthRequest on url: {}, body: {}", initBrwUrl, request);
 
     // Initialise authentication by making  POST request to /brw/init/{messageCategory} (Step. 3)
     RequestEntity<InitAuthRequestBRW> req =
         new RequestEntity<>(request, HttpMethod.POST, URI.create(initBrwUrl));
+
     try {
       ResponseEntity<InitAuthResponseBRW> resp =
           restTemplate.exchange(req, InitAuthResponseBRW.class);
@@ -76,29 +89,31 @@ public class AuthController {
 
     } catch (HttpClientErrorException | HttpServerErrorException ex) {
 
-      logger
-          .error("initAuthReq failed, {}, {}", ex.getStatusCode(), ex.getResponseBodyAsString());
+      logger.error("initAuthReq failed, {}, {}", ex.getStatusCode(), ex.getResponseBodyAsString());
 
       throw ex;
     }
   }
 
   @PostMapping("/auth")
-  public AuthResponseBRW auth(@RequestParam("id") String transId) {
+  public AuthResponseBRW auth(@RequestParam("id") String transId) throws JsonProcessingException {
 
     MerchantTransaction transaction = transMgr.findTransaction(transId);
 
-    //create authentication request.
+    // create authentication request.
     AuthRequestBRW authRequest = new AuthRequestBRW();
     authRequest.setThreeDSRequestorTransID(transaction.getId());
-    authRequest
-        .setThreeDSServerTransID(transaction.getInitAuthResponseBRW().getThreeDSServerTransID());
+    authRequest.setThreeDSServerTransID(
+        transaction.getInitAuthResponseBRW().getThreeDSServerTransID());
 
     String brwUrl = THREE_DS_SERVER_URL + "/api/v1/auth/brw";
-    AuthResponseBRW response = restTemplate
-        .postForObject(brwUrl, authRequest, AuthResponseBRW.class);
 
-    logger.info("authResponseBRW {}", response);
+    logger.info("requesting BRW Auth API {}, body {}", brwUrl, authRequest);
+
+    AuthResponseBRW response =
+        restTemplate.postForObject(brwUrl, authRequest, AuthResponseBRW.class);
+
+    logger.info("authResponseBRW {}", objectMapper.writeValueAsString(response));
 
     return response;
   }
@@ -108,8 +123,8 @@ public class AuthController {
    * information from your database Commented out fields are filled in by 3ds-web-adapter.js from
    * the input fields in checkout page
    */
-  private void fillInitAuthRequestBRW(InitAuthRequestBRW initAuthRequestBRW,
-      String eventCallBackUrl) {
+  private void fillInitAuthRequestBRW(
+      InitAuthRequestBRW initAuthRequestBRW, String eventCallBackUrl) {
 
     initAuthRequestBRW.setAcctID("personal account");
 
@@ -134,16 +149,18 @@ public class AuthController {
     initAuthRequestBRW.setAcctInfo(acctInfo);
 
     initAuthRequestBRW.setAcctType("03");
-    initAuthRequestBRW.setAuthenticationInd("01");//01 = Payment transaction
+    initAuthRequestBRW.setAuthenticationInd("01"); // 01 = Payment transaction
 
     // fills ThreeDSRequestorAuthenticationInfo
-    ThreeDSRequestorAuthenticationInfo threeDSRequestorAuthenticationInfo = new ThreeDSRequestorAuthenticationInfo();
+    ThreeDSRequestorAuthenticationInfo threeDSRequestorAuthenticationInfo =
+        new ThreeDSRequestorAuthenticationInfo();
     threeDSRequestorAuthenticationInfo.setThreeDSReqAuthData("login GP");
     threeDSRequestorAuthenticationInfo.setThreeDSReqAuthMethod("02");
     threeDSRequestorAuthenticationInfo.setThreeDSReqAuthTimestamp("201711071307");
     initAuthRequestBRW.setAuthenticationInfo(threeDSRequestorAuthenticationInfo);
 
-    // fills MerchantRiskIndicator, optional but strongly recommended for the accuracy of risk based authentication
+    // fills MerchantRiskIndicator, optional but strongly recommended for the accuracy of risk based
+    // authentication
     MerchantRiskIndicator merchantRiskIndicator = new MerchantRiskIndicator();
     merchantRiskIndicator.setDeliveryEmailAddress("test@123.com");
     merchantRiskIndicator.setDeliveryTimeframe("02");
@@ -158,69 +175,71 @@ public class AuthController {
     initAuthRequestBRW.setMerchantRiskIndicator(merchantRiskIndicator);
 
     /**
-     * Options for threeDSRequestorChallengeInd - Indicates whether a challenge is requested for this transaction.
-     * Values accepted:
-     *  01 = No preference
-     *  02 = No challenge requested
-     *  03 = Challenge requested: 3DS Requestor Preference
-     *  04 = Challenge requested: Mandate
-     *  05–79 = Reserved for EMVCo future use (values invalid until defined by EMVCo)
-     *  80-99 = Reserved for DS use
+     * Options for threeDSRequestorChallengeInd - Indicates whether a challenge is requested for
+     * this transaction. Values accepted: 01 = No preference 02 = No challenge requested 03 =
+     * Challenge requested: 3DS Requestor Preference 04 = Challenge requested: Mandate 05–79 =
+     * Reserved for EMVCo future use (values invalid until defined by EMVCo) 80-99 = Reserved for DS
+     * use
      */
     initAuthRequestBRW.setChallengeInd("01");
-    initAuthRequestBRW.setEventCallbackUrl(eventCallBackUrl); //Set this to your url
-    initAuthRequestBRW.setMerchantId("123456789012345");
-    initAuthRequestBRW
-        .setPurchaseDate(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")));
+    initAuthRequestBRW.setEventCallbackUrl(eventCallBackUrl); // Set this to your url
+    initAuthRequestBRW.setThreeDSRequestorID(
+        "123456789.visa"); // this is removed, todo: to remove it
+    // initAuthRequestBRW.setMerchantID("123456789012345");
+    // initAuthRequestBRW.setMerchantID("7dc559f5-b968-473d-97e9-4da57dda57f5");  //from
+    // admin.asdev.testlab.3dsecure.cloud, temp for test only
+    initAuthRequestBRW.setMerchantId(
+        "123456789012345"); // from admin.asdev.testlab.3dsecure.cloud, temp for test only
+    initAuthRequestBRW.setPurchaseDate(
+        LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")));
     initAuthRequestBRW.setPurchaseInstalData("24");
-    initAuthRequestBRW.setRecurringExpiry("20180131");
-    initAuthRequestBRW.setRecurringFrequency("6");
-    initAuthRequestBRW.setThreeDSRequestorID("123456789");
+    // initAuthRequestBRW.setRecurringExpiry("20180131");
+    // initAuthRequestBRW.setRecurringFrequency("6");
     initAuthRequestBRW.setTransType("03");
 
-//        Following attributes are filled in by 3ds-web-adapter.js
-//        initAuthRequestBRW.setThreeDSRequestorTransID("jaondoXJojaNOASaAsSAAS");
-//        initAuthRequestBRW.setAcctNumber("4123450000002");
-//        initAuthRequestBRW.setPurchaseAmount("101");
-//        initAuthRequestBRW.setCardExpiryDate("2010");
-//         fills CardholderInformation, some of them can be filled in at 3ds-web-adapter.js but for demo purposes just fill default data, to avoid confusion
-//        CardholderInformation cardholderInformation = new CardholderInformation();
-//        cardholderInformation.setBillAddrCity("Bill City Name");
-//        cardholderInformation.setBillAddrCountry("840");
-//        cardholderInformation.setBillAddrLine1("Bill Address Line 1");
-//        cardholderInformation.setBillAddrLine2("Bill Address Line 2");
-//        cardholderInformation.setBillAddrLine3("Bill Address Line 3");
-//        cardholderInformation.setBillAddrPostCode("Bill Post Code");
-//        cardholderInformation.setBillAddrState("CO");
-//        cardholderInformation.setCardholderName("Cardholder Name");
-//        cardholderInformation.setEmail("example@example.com");
+    //        Following attributes are filled in by 3ds-web-adapter.js
+    //        initAuthRequestBRW.setThreeDSRequestorTransID("jaondoXJojaNOASaAsSAAS");
+    //        initAuthRequestBRW.setAcctNumber("4123450000002");
+    //        initAuthRequestBRW.setPurchaseAmount("101");
+    //        initAuthRequestBRW.setCardExpiryDate("2010");
+    //         fills CardholderInformation, some of them can be filled in at 3ds-web-adapter.js but
+    // for demo purposes just fill default data, to avoid confusion
+    //        CardholderInformation cardholderInformation = new CardholderInformation();
+    //        cardholderInformation.setBillAddrCity("Bill City Name");
+    //        cardholderInformation.setBillAddrCountry("840");
+    //        cardholderInformation.setBillAddrLine1("Bill Address Line 1");
+    //        cardholderInformation.setBillAddrLine2("Bill Address Line 2");
+    //        cardholderInformation.setBillAddrLine3("Bill Address Line 3");
+    //        cardholderInformation.setBillAddrPostCode("Bill Post Code");
+    //        cardholderInformation.setBillAddrState("CO");
+    //        cardholderInformation.setCardholderName("Cardholder Name");
+    //        cardholderInformation.setEmail("example@example.com");
 
-//        PhoneNumber mobilePhone = new PhoneNumber();
-//        mobilePhone.setCountryCode("212");
-//        mobilePhone.setSubscriber("123456789");
-//        cardholderInformation.setMobilePhone(mobilePhone);
+    //        PhoneNumber mobilePhone = new PhoneNumber();
+    //        mobilePhone.setCountryCode("212");
+    //        mobilePhone.setSubscriber("123456789");
+    //        cardholderInformation.setMobilePhone(mobilePhone);
 
-//        PhoneNumber homePhone = new PhoneNumber();
-//        homePhone.setCountryCode("212");
-//        homePhone.setSubscriber("123456789");
-//        cardholderInformation.setHomePhone(homePhone);
+    //        PhoneNumber homePhone = new PhoneNumber();
+    //        homePhone.setCountryCode("212");
+    //        homePhone.setSubscriber("123456789");
+    //        cardholderInformation.setHomePhone(homePhone);
 
-//        PhoneNumber workPhone = new PhoneNumber();
-//        workPhone.setCountryCode("212");
-//        workPhone.setSubscriber("123456789");
-//        cardholderInformation.setWorkPhone(workPhone);
+    //        PhoneNumber workPhone = new PhoneNumber();
+    //        workPhone.setCountryCode("212");
+    //        workPhone.setSubscriber("123456789");
+    //        cardholderInformation.setWorkPhone(workPhone);
 
-//        cardholderInformation.setShipAddrCity("Ship City Name");
-//        cardholderInformation.setShipAddrCountry("840");
-//        cardholderInformation.setShipAddrLine1("Ship Address Line 1");
-//        cardholderInformation.setShipAddrLine2("Ship Address Line 2");
-//        cardholderInformation.setShipAddrLine3("Ship Address Line 3");
-//        cardholderInformation.setShipAddrPostCode("Ship Post Code");
-//        cardholderInformation.setShipAddrState("CO");
-//        Set priorTransID if this is not the first transaction
-//		  initAuthRequestBRW.setPriorTransID(generateUuid());
-//        initAuthRequestBRW.setPurchaseCurrency("870"); //USD, see ISO country code
+    //        cardholderInformation.setShipAddrCity("Ship City Name");
+    //        cardholderInformation.setShipAddrCountry("840");
+    //        cardholderInformation.setShipAddrLine1("Ship Address Line 1");
+    //        cardholderInformation.setShipAddrLine2("Ship Address Line 2");
+    //        cardholderInformation.setShipAddrLine3("Ship Address Line 3");
+    //        cardholderInformation.setShipAddrPostCode("Ship Post Code");
+    //        cardholderInformation.setShipAddrState("CO");
+    //        Set priorTransID if this is not the first transaction
+    //		  initAuthRequestBRW.setPriorTransID(generateUuid());
+    //        initAuthRequestBRW.setPurchaseCurrency("870"); //USD, see ISO country code
 
   }
 }
-
