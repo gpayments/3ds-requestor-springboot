@@ -1,10 +1,10 @@
-package com.gpayments.requestor.sample_requestor;
+package com.gpayments.requestor;
 
-import com.gpayments.requestor.sample_requestor.dto.Cart;
-import com.gpayments.requestor.sample_requestor.dto.Item;
-import com.gpayments.requestor.sample_requestor.dto.Shop;
-import com.gpayments.requestor.sample_requestor.transaction.MerchantTransaction;
-import com.gpayments.requestor.sample_requestor.transaction.TransactionManager;
+import com.gpayments.requestor.dto.Cart;
+import com.gpayments.requestor.dto.Item;
+import com.gpayments.requestor.dto.Shop;
+import com.gpayments.requestor.transaction.MerchantTransaction;
+import com.gpayments.requestor.transaction.TransactionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

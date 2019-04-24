@@ -1,10 +1,9 @@
-package com.gpayments.requestor.sample_requestor.transaction;
-
-import org.springframework.stereotype.Component;
+package com.gpayments.requestor.transaction;
 
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import org.springframework.stereotype.Component;
 
 /**
  * @author GPayments ON 31/07/2018

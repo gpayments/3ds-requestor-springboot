@@ -1,4 +1,4 @@
-package com.gpayments.requestor.sample_requestor.transaction;
+package com.gpayments.requestor.transaction;
 
 /**
  * @author GPayments ON 31/07/2018

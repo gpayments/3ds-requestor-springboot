@@ -1,9 +1,8 @@
-package com.gpayments.requestor.sample_requestor.dto;
-
-import org.springframework.stereotype.Component;
+package com.gpayments.requestor.dto;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.stereotype.Component;
 
 /**
  * @author GPayments ON 31/07/2018

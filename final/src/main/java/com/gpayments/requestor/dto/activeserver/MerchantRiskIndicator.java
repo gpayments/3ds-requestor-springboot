@@ -1,4 +1,4 @@
-package com.gpayments.requestor.sample_requestor.dto.activeserver;
+package com.gpayments.requestor.dto.activeserver;
 
 /*
  * GPayments 3DS Server API Reference

@@ -1,4 +1,4 @@
-package com.gpayments.requestor.sample_requestor;
+package com.gpayments.requestor;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

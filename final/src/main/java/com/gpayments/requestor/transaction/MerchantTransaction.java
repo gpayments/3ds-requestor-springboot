@@ -1,7 +1,7 @@
-package com.gpayments.requestor.sample_requestor.transaction;
+package com.gpayments.requestor.transaction;
 
 
-import com.gpayments.requestor.sample_requestor.dto.activeserver.InitAuthResponseBRW;
+import com.gpayments.requestor.dto.activeserver.InitAuthResponseBRW;
 
 /**
  * @author GPayments ON 31/07/2018

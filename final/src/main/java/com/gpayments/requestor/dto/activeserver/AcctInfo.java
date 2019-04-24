@@ -10,7 +10,7 @@
  * Do not edit the class manually.
  */
 
-package com.gpayments.requestor.sample_requestor.dto.activeserver;
+package com.gpayments.requestor.dto.activeserver;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;

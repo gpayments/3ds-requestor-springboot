@@ -1,4 +1,4 @@
-package com.gpayments.requestor.sample_requestor.dto;
+package com.gpayments.requestor.dto;
 
 /**
  * @author GPayments ON 31/07/2018

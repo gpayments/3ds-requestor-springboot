@@ -1,16 +1,25 @@
-package com.gpayments.requestor.sample_requestor;
+package com.gpayments.requestor;
 
-import com.gpayments.requestor.sample_requestor.dto.activeserver.*;
-import com.gpayments.requestor.sample_requestor.transaction.MerchantTransaction;
-import com.gpayments.requestor.sample_requestor.transaction.TransactionManager;
+import com.gpayments.requestor.dto.activeserver.AcctInfo;
+import com.gpayments.requestor.dto.activeserver.AuthRequestBRW;
+import com.gpayments.requestor.dto.activeserver.AuthResponseBRW;
+import com.gpayments.requestor.dto.activeserver.InitAuthRequestBRW;
+import com.gpayments.requestor.dto.activeserver.InitAuthResponseBRW;
+import com.gpayments.requestor.dto.activeserver.MerchantRiskIndicator;
+import com.gpayments.requestor.dto.activeserver.ThreeDSRequestorAuthenticationInfo;
+import com.gpayments.requestor.transaction.MerchantTransaction;
+import com.gpayments.requestor.transaction.TransactionManager;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
-
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 @RestController
 @RequestMapping("/")
