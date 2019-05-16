@@ -76,9 +76,6 @@ public class InitAuthRequestBRW {
   @JsonProperty("recurringFrequency")
   private String recurringFrequency = null;
 
-  @JsonProperty("threeDSRequestorID")
-  private String threeDSRequestorID = null;
-
   @JsonProperty("threeDSRequestorTransID")
   private String threeDSRequestorTransID = null;
 
@@ -349,20 +346,6 @@ public class InitAuthRequestBRW {
   }
 
   /**
-   * DS assigned 3DS Requestor identifier. Each DS will provide a unique ID to each 3DS Requestor on
-   * an individual basis. Length: Maximum 35 characters
-   *
-   * @return threeDSRequestorID
-   */
-  public String getThreeDSRequestorID() {
-    return threeDSRequestorID;
-  }
-
-  public void setThreeDSRequestorID(String threeDSRequestorID) {
-    this.threeDSRequestorID = threeDSRequestorID;
-  }
-
-  /**
    * &#39;Universal unique transaction identifier assigned by the 3DS Requestor to identify a single
    * transaction. Length: 36 characters
    *
@@ -445,9 +428,6 @@ public class InitAuthRequestBRW {
         + "\",\n"
         + "\t\"recurringFrequency\":\""
         + recurringFrequency
-        + "\",\n"
-        + "\t\"threeDSRequestorID\":\""
-        + threeDSRequestorID
         + "\",\n"
         + "\t\"threeDSRequestorTransID\":\""
         + threeDSRequestorTransID

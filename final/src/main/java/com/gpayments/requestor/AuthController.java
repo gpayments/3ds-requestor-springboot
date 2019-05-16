@@ -35,7 +35,7 @@ public class AuthController {
   private final RestTemplate restTemplate;
   private final TransactionManager transMgr;
 
-  static final String THREE_DS_SERVER_URL = "https://api.as.testlab.3dsecure.cloud:9443";
+  static final String THREE_DS_SERVER_URL = "https://api.as.testlab.3dsecure.cloud:7443";
   private final String THREE_DS_REQUESTOR_URL = "http://localhost:8082";
 
   @Autowired
@@ -178,13 +178,8 @@ public class AuthController {
      */
     initAuthRequestBRW.setChallengeInd("01");
     initAuthRequestBRW.setEventCallbackUrl(eventCallBackUrl); // Set this to your url
-    initAuthRequestBRW.setThreeDSRequestorID(
-        "123456789.visa"); // this is removed, todo: to remove it
-    // initAuthRequestBRW.setMerchantID("123456789012345");
-    // initAuthRequestBRW.setMerchantID("7dc559f5-b968-473d-97e9-4da57dda57f5");  //from
-    // admin.asdev.testlab.3dsecure.cloud, temp for test only
     initAuthRequestBRW.setMerchantId(
-        "123456789012345"); // from admin.asdev.testlab.3dsecure.cloud, temp for test only
+        "123456789012345"); // from admin.as.testlab.3dsecure.cloud, temp for test only
     initAuthRequestBRW.setPurchaseDate(
         LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")));
     initAuthRequestBRW.setPurchaseInstalData("24");
