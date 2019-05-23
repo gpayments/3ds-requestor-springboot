@@ -7,7 +7,7 @@ The **3DS Requestor** is the merchant side 3DS2 component and is used to pass 3D
 
 The 3DS Requestor has a relationship with the cardholder either via the 3DS Requestor App, or the 3DS Method/Browser on the consumer device. To process 3-D Secure for **Browser-based** transactions, the 3DS Requestor utilises the 3DS Method to gather browser information/device details and the ACS provides HTML to the browser to display the UI to the cardholder when a challenge is necessary.
  
-This section provides an introductory guide on how to integrate your merchant web server with the 3DS Requestor code to connect with ActiveServer, utilising GPayments' sample code. For information regarding Merchant App integration, please refer to the [**ActiveSDK documentation**](TODO). 
+This section provides an introductory guide on how to integrate your merchant web server with the 3DS Requestor code to connect with ActiveServer, utilising GPayments' sample code. For information regarding Merchant App integration, please refer to the [**ActiveSDK documentation**](https://docs.activesdk.cloud/en/). 
 
 ## **Prerequisites**
 
@@ -19,4 +19,4 @@ The following are prerequisites to using this guide:
 * IDE of your choice
 * Apache Maven, for installation, please refer to https://maven.apache.org/install.html
 * A GIT client
-* An [activated and running ActiveServer](https://docs.activeserver.cloud/en/) instance
+* An [activated and running ActiveServer](https://docs.activeserver.cloud/en/guides/activate_instance/) instance
