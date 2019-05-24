@@ -41,7 +41,6 @@ public class RestClientConfig {
     CloseableHttpClient client =
         HttpClients.custom()
             .setSSLContext(sslContext)
-            .setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE)
             .build();
     HttpComponentsClientHttpRequestFactory httpRequestFactory =
         new HttpComponentsClientHttpRequestFactory(client);
