@@ -1,5 +1,7 @@
 package com.gpayments.requestor;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gpayments.requestor.dto.activeserver.AcctInfo;
 import com.gpayments.requestor.dto.activeserver.AuthRequestBRW;
 import com.gpayments.requestor.dto.activeserver.AuthResponseBRW;
@@ -37,19 +39,21 @@ public class AuthController {
 
   static final String THREE_DS_SERVER_URL = "https://api.as.testlab.3dsecure.cloud:7443";
   private final String THREE_DS_REQUESTOR_URL = "http://localhost:8082";
+  private final ObjectMapper objectMapper;
 
   @Autowired
   public AuthController(
-      RestTemplate restTemplate, TransactionManager transMgr) {
+          RestTemplate restTemplate, TransactionManager transMgr, ObjectMapper objectMapper) {
     this.restTemplate = restTemplate;
     this.transMgr = transMgr;
+    this.objectMapper = objectMapper;
   }
 
   /**
    * Handler method for /auth/init, it initialises authentication through /brw/init/{}
    */
   @PostMapping("/auth/init")
-  public InitAuthResponseBRW initAuth(@RequestBody InitAuthRequestBRW request) {
+  public InitAuthResponseBRW initAuth(@RequestBody InitAuthRequestBRW request) throws JsonProcessingException {
     // find transaction with transaction id
     MerchantTransaction transactionInfo =
         transMgr.findTransaction(request.getThreeDSRequestorTransID());
@@ -65,7 +69,7 @@ public class AuthController {
 
     String initBrwUrl = THREE_DS_SERVER_URL + "/api/v1/auth/brw/init/pa";
 
-    logger.info("initAuthRequest on url: {}, body: {}", initBrwUrl, request);
+    logger.info("initAuthRequest on url: {}, body: {}", initBrwUrl, objectMapper.writeValueAsString(request));
 
     // Initialise authentication by making  POST request to /brw/init/{messageCategory} (Step. 3)
     RequestEntity<InitAuthRequestBRW> req =
@@ -76,7 +80,7 @@ public class AuthController {
           restTemplate.exchange(req, InitAuthResponseBRW.class);
 
       InitAuthResponseBRW initRespBody = resp.getBody();
-      logger.info("initAuthResponseBRW {}", initRespBody);
+      logger.info("initAuthResponseBRW {}", objectMapper.writeValueAsString(initRespBody));
 
       // set InitAuthResponseBRW for future use
       transactionInfo.setInitAuthResponseBRW(initRespBody);
@@ -91,7 +95,7 @@ public class AuthController {
   }
 
   @PostMapping("/auth")
-  public AuthResponseBRW auth(@RequestParam("id") String transId) {
+  public AuthResponseBRW auth(@RequestParam("id") String transId) throws JsonProcessingException {
 
     MerchantTransaction transaction = transMgr.findTransaction(transId);
 
@@ -103,12 +107,13 @@ public class AuthController {
 
     String brwUrl = THREE_DS_SERVER_URL + "/api/v1/auth/brw";
 
-    logger.info("requesting BRW Auth API {}, body {}", brwUrl, authRequest);
+
+    logger.info("requesting BRW Auth API {}, body {}", brwUrl, objectMapper.writeValueAsString(authRequest));
 
     AuthResponseBRW response =
         restTemplate.postForObject(brwUrl, authRequest, AuthResponseBRW.class);
 
-    logger.info("authResponseBRW {}", response);
+    logger.info("authResponseBRW {}", objectMapper.writeValueAsString(response));
 
     return response;
   }

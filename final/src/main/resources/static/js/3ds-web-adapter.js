@@ -8,20 +8,26 @@ Main Entry
 */
 function threeDSAuth(transId, cardHolderInfo, purchaseInfo) {
 
+    var postData = {
+        threeDSRequestorTransID: transId,
+        purchaseAmount: purchaseInfo.purchaseAmount,
+        acctNumber: purchaseInfo.acctNumber,
+        cardHolderInfo: cardHolderInfo
+    };
+
+    if (purchaseInfo.expiryDate) {
+        postData.cardExpiryDate = purchaseInfo.expiryDate;
+    }
+    if (purchaseInfo.purchaseCurrency) {
+        postData.purchaseCurrency = purchaseInfo.purchaseCurrency;
+    }
+
     console.log('init authentication');
     $.ajax({
         url: '/auth/init',
         type: 'POST',
         contentType: "application/json",
-        data: JSON.stringify({
-            threeDSRequestorTransID: transId,
-            cardExpiryDate: purchaseInfo.expiryDate,
-            purchaseAmount: purchaseInfo.purchaseAmount,
-            purchaseCurrency: purchaseInfo.purchaseCurrency,
-            acctNumber: purchaseInfo.acctNumber,
-            cardHolderInfo: cardHolderInfo
-            // you can pass on more information if you need to e.g. acctInfo
-        }),
+        data: JSON.stringify(postData),
         success: function (data) {
             console.log('init auth returns:', data);
             $('<iframe id="threeds-container" width="0" height="0" style="visibility: hidden;" src="'

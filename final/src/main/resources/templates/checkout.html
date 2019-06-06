@@ -323,35 +323,72 @@
         var transId = $('#transId').val();
 
         // NOTE: Some attributes are set to default values for demo purpose
-        var cardHolderInfo = {
-            billAddrLine1: $('#billAddrLine1').val(),
-            billAddrLine2: $('#billAddrLine2').val(),
-            billAddrLine3: 'abc Line 3',
-            billAddrCity: $('#billAddrCity').val(),
-            billAddrState: $('#billAddrState').val(),
-            billAddrPostCode: $('#billAddrPostCode').val(),
-            billAddrCountry: '036',
-            shipAddrLine1: $('#shipAddrLine1').val(),
-            shipAddrLine2: $('#shipAddrLine2').val(),
-            shipAddrLine3: 'abc Line 3',
-            shipAddrCity: $('#shipAddrCity').val(),
-            shipAddrState: $('#shipAddrState').val(),
-            shipAddrPostCode: $('#shipAddrPostCode').val(),
-            shipAddrCountry: '036',
-            mobilePhone: {cc: '61', subscriber: $('#phoneNumber').val()},
-            homePhone: {cc: '61', subscriber: '90123917131'},
-            workPhone: {cc: '61', subscriber: '89102183192'},
-            email: $('#email').val(),
-            cardholderName: $('#cardholderName').val()
-        };
+        var cardHolderInfo = {};
+
+        if($('#billAddrLine1').val()) {
+            cardHolderInfo.billAddrLine1 = $('#billAddrLine1').val();
+        }
+
+        if($('#billAddrLine2').val()) {
+            cardHolderInfo.billAddrLine2 = $('#billAddrLine2').val();
+        }
+
+        if($('#billAddrCity').val()) {
+            cardHolderInfo.billAddrCity = $('#billAddrCity').val();
+        }
+
+        if($('#billAddrState').val()) {
+            cardHolderInfo.billAddrState = $('#billAddrState').val();
+            cardHolderInfo.billAddrCountry = '036';
+        }
+
+        if($('#billAddrPostCode').val()) {
+            cardHolderInfo.billAddrPostCode = $('#billAddrPostCode').val();
+        }
+
+        if($('#shipAddrLine1').val()) {
+            cardHolderInfo.shipAddrLine1 = $('#shipAddrLine1').val();
+        }
+
+        if($('#shipAddrLine2').val()) {
+            cardHolderInfo.shipAddrLine2 = $('#shipAddrLine2').val();
+        }
+
+        if($('#shipAddrCity').val()) {
+            cardHolderInfo.shipAddrCity = $('#shipAddrCity').val();
+        }
+
+        if($('#shipAddrState').val()) {
+            cardHolderInfo.shipAddrState = $('#shipAddrState').val();
+            cardHolderInfo.shipAddrCountry = '036';
+        }
+
+        if($('#shipAddrPostCode').val()) {
+            cardHolderInfo.shipAddrPostCode = $('#shipAddrPostCode').val();
+        }
+
+        if($('#cardholderName').val()) {
+            cardHolderInfo.cardholderName = $('#cardholderName').val();
+        }
+
+        if($('#phoneNumber').val()) {
+            cardHolderInfo.mobilePhone = {cc: '61', subscriber: $('#phoneNumber').val()};
+        }
+
+        if($('#email').val()) cardHolderInfo.email = $('#email').val();
 
         var purchaseInfo = {
             acctNumber: $('#cardNumber').val(),
-            purchaseAmount: $('#totalPrice').val() * 100,
-            purchaseCurrency: $('#purchaseCurrency').val(), // ISO 4217
-            expiryDate: $('#cardExpiry').val()
+            purchaseAmount: $('#totalPrice').val() * 100
         };
 
+        if($('#purchaseCurrency').val()) {
+            purchaseInfo.purchaseCurrency = $('#purchaseCurrency').val();
+        }
+
+        if($('#cardExpiry').val()) {
+            purchaseInfo.expiryDate = $('#expiryDate').val();
+        }
         //remove cardholder information class, checkout button and show spinner effect
         $("#checkoutButton").remove();
 
