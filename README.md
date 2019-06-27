@@ -1,5 +1,5 @@
 # 3ds-requestor-springboot
-3DS Requstor demo code implemented with SpringBoot for ActiveServer
+3DS2 Requstor demo code implemented with SpringBoot for ActiveServer
 
 ## **3DS Requestor Setup Guide**
 
